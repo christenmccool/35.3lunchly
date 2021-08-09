@@ -7,26 +7,30 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
-/** Search list of customers by name */
+/** Homepage: show list of customers. */
+// If there is a search parameter, return search results
 
-router.get("/search", async function(req, res, next) {
+router.get("/", async function(req, res, next) {
   try {
-    const {searchInfo} = req.query;
-    console.log(searchInfo);
-    const customers = await Customer.search(searchInfo);
-    console.log(customers);
-    return res.render("search_results.html", { customers });
+    const {partialName} = req.query;
+    if (partialName) {
+      const customers = await Customer.search(partialName);
+      return res.render("search_results.html", { customers });
+    } 
+    const customers = await Customer.all();
+    return res.render("customer_list.html", { customers });
   } catch (err) {
     return next(err);
   }
 });
 
+/** Get 10 best customers. */
 
-/** Homepage: show list of customers. */
-
-router.get("/", async function(req, res, next) {
+router.get("/best", async function(req, res, next) {
   try {
-    const customers = await Customer.all();
+    const customers = await Customer.getBestCustomers(10);
+    console.log(customers);
+
     return res.render("customer_list.html", { customers });
   } catch (err) {
     return next(err);

@@ -4,7 +4,6 @@ const moment = require("moment");
 
 const db = require("../db");
 
-
 /** A reservation for a party */
 
 class Reservation {
